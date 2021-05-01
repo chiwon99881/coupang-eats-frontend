@@ -13,3 +13,9 @@
 
   npx tailwindcss init
   ```
+
+- #03 Apollo Setup
+
+  ```bash
+  npm i @apollo/client, graphql @types/graphql
+  ```
