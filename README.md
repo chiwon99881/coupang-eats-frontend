@@ -38,3 +38,11 @@ npm i react-hook-form
 ```
 
 - #08 Login Form
+
+- #09 TypeScript Codegen
+
+```bash
+npm i apollo
+
+codegen script: "apollo client:codegen src/__generated__ --target=typescript --outputFlat"
+```

@@ -3,6 +3,17 @@ import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import logo from '../../images/coupang-eats-logo.png';
 import { ErrorMessage } from '../../components/errorMessage';
+import gql from 'graphql-tag';
+
+const LOGIN_MUTATION = gql`
+  mutation loginUserMutation($input: LoginInput!) {
+    loginUser(input: $input) {
+      ok
+      error
+      token
+    }
+  }
+`
 
 interface FormData {
   email: string;
