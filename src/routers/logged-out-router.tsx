@@ -1,3 +1,13 @@
 import React from 'react';
+import { Switch, Route } from 'react-router-dom';
+import { Home } from '../pages/commons/home';
 
-export const LoggedOutRouter = () => <span>Logged Out</span>;
+const LoggedOutRoutes = () => (
+  <Switch>
+    <Route exact={true} path={'/'}>
+      <Home />
+    </Route>
+  </Switch>
+);
+
+export const LoggedOutRouter = () => <LoggedOutRoutes />;

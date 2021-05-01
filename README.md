@@ -27,3 +27,5 @@
   ```
 
 - #05 useReactiveVar for isLogged?
+
+- #06 Home (No Login)

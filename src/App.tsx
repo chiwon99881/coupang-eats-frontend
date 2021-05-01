@@ -5,9 +5,9 @@ import { LoggedInRouter } from './routers/logged-in-router';
 import { LoggedOutRouter } from './routers/logged-out-router';
 
 function App() {
-  const isLoggedin: boolean = useReactiveVar(isLoggedVar);
-
-  return isLoggedin ? <LoggedInRouter /> : <LoggedOutRouter />;
+  const isLoggedIn: boolean = useReactiveVar(isLoggedVar);
+  console.log(isLoggedIn);
+  return isLoggedIn ? <LoggedInRouter /> : <LoggedOutRouter />;
 }
 
 export default App;
