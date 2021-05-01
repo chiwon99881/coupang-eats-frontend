@@ -46,3 +46,5 @@ npm i apollo
 
 codegen script: "apollo client:codegen src/__generated__ --target=typescript --outputFlat"
 ```
+
+- #10 Login Mutation
