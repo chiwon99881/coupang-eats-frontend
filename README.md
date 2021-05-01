@@ -19,3 +19,11 @@
   ```bash
   npm i @apollo/client, graphql @types/graphql
   ```
+
+- #04 React Router Dom
+
+  ```bash
+  npm i react-router-dom @types/react-router-dom
+  ```
+
+- #05 useReactiveVar for isLogged?
