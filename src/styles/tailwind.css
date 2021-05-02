@@ -5,3 +5,7 @@
 .error {
   @apply text-red-400 font-semibold mb-3;
 }
+
+.form-input {
+  @apply bg-gray-50 w-full px-2 py-3 border border-gray-300 rounded-sm mb-3 focus:outline-none;
+}

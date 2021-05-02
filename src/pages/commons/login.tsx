@@ -1,5 +1,5 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import logo from '../../images/coupang-eats-logo.png';
 import { ErrorMessage } from '../../components/errorMessage';
@@ -19,7 +19,7 @@ const LOGIN_MUTATION = gql`
   }
 `
 
-interface FormData {
+interface FormValues {
   email: string;
   password: string;
 }
@@ -41,9 +41,9 @@ export const Login: React.FunctionComponent = () => {
     getValues,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm<FormData>({ mode: 'onChange' });
+  } = useForm<FormValues>({ mode: 'onChange' });
   
-  const onSubmit = () => {
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
     const {email, password} = getValues();
     try {
       loginUser({variables: {input: {email, password}}});
@@ -74,7 +74,7 @@ export const Login: React.FunctionComponent = () => {
             })}
             type={'email'}
             placeholder={'Email'}
-            className="bg-gray-50 w-full px-2 py-3 border border-gray-300 rounded-sm mb-3 focus:outline-none"
+            className="form-input"
           />
           {errors.email?.type === 'pattern' && (
             <ErrorMessage message={'Incorrectly email.'} />
@@ -86,7 +86,7 @@ export const Login: React.FunctionComponent = () => {
             {...register('password', { required: true })}
             type={'password'}
             placeholder={'Password'}
-            className="bg-gray-50 w-full px-2 py-3 border border-gray-300 rounded-sm mb-3 focus:outline-none"
+            className="form-input"
           />
           {errors.password?.type === 'required' && (
             <ErrorMessage message={'Password is required.'} />
