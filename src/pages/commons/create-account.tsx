@@ -8,6 +8,7 @@ import { useMutation } from '@apollo/client';
 import { createUserMutation, createUserMutationVariables } from '../../__generated__/createUserMutation';
 import { Loading } from '../../components/loading';
 import { useHistory } from 'react-router';
+import { toast } from 'react-toastify';
 
 const CREATE_USER_MUTATION = gql`
   mutation createUserMutation($input: CreateUserInput!) {
@@ -41,11 +42,13 @@ export const CreateAccount: React.FC = () => {
     const { createUser: {ok, error, user} } = data;
     if(ok) {
       if(user) {
+        toast.success('Create account successfully 🤍, Go login !')
         setTimeout(() => {
           history.push("/")
         }, 3000);
       }
     } else {
+      toast.error(`${error} 😥`)
       console.log(error);
     }
   }

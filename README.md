@@ -54,3 +54,9 @@ codegen script: "apollo client:codegen src/__generated__ --target=typescript --o
 - #12 Create User 1
 
 - #13 Create User 2
+
+- #14 react-toastify
+
+  ```bash
+  npm i react-toastify
+  ```
