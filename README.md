@@ -48,3 +48,5 @@ codegen script: "apollo client:codegen src/__generated__ --target=typescript --o
 ```
 
 - #10 Login Mutation
+
+- #11 Loading, 404 Component

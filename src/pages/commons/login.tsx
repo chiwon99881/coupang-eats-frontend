@@ -91,14 +91,14 @@ export const Login: React.FunctionComponent = () => {
           {errors.password?.type === 'required' && (
             <ErrorMessage message={'Password is required.'} />
           )}
-          {loginUserLoading ? <button
+          {loginUserLoading ? <Loading /> : <button
             type={'submit'}
             className={`w-full bg-blue-300 p-4 rounded-sm text-white font-medium ${
               isValid ? 'bg-opacity-100' : 'bg-opacity-30 pointer-events-none'
             }`}
           >
             Log In
-          </button> : <Loading />}
+          </button>}
           <div className="border-t border-gray-300 h-px w-full my-8"></div>
           <span className="font-medium">
             You don't have account?{' '}
