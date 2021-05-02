@@ -60,3 +60,5 @@ codegen script: "apollo client:codegen src/__generated__ --target=typescript --o
   ```bash
   npm i react-toastify
   ```
+
+- #15 Home (me query)

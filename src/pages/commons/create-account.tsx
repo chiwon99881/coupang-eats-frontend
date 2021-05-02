@@ -9,6 +9,7 @@ import { createUserMutation, createUserMutationVariables } from '../../__generat
 import { Loading } from '../../components/loading';
 import { useHistory } from 'react-router';
 import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
 
 const CREATE_USER_MUTATION = gql`
   mutation createUserMutation($input: CreateUserInput!) {
@@ -128,6 +129,8 @@ export const CreateAccount: React.FC = () => {
           </select>
           {errors.role?.type === "required" && <ErrorMessage message={'Role is required.'} />}
           {createUserLoading ? <Loading /> : <button type={'submit'} className={`w-full bg-blue-300 p-4 rounded-sm text-white font-medium ${isValid ? 'bg-opacity-100' : 'bg-opacity-30 pointer-events-none'}`}>Create account</button>}
+          <div className="border-t border-gray-300 w-full h-px my-5"></div>
+          <span className="font-medium">You already have account?<Link to={"/"} className="text-blue-300 font-medium ml-2">Login here!</Link></span>
         </form>
       </div>
     </div>

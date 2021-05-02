@@ -6,8 +6,9 @@ import { ErrorMessage } from '../../components/errorMessage';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 import { loginUserMutation, loginUserMutationVariables } from '../../__generated__/loginUserMutation';
-import { isLoggedVar } from '../../apollo';
+import { authToken, isLoggedVar } from '../../apollo';
 import { Loading} from "../../components/loading";
+import { toast } from 'react-toastify';
 
 const LOGIN_MUTATION = gql`
   mutation loginUserMutation($input: LoginInput!) {
@@ -29,13 +30,14 @@ export const Login: React.FunctionComponent = () => {
     if(data && data.loginUser.ok) {
       if(data.loginUser.token) {
         localStorage.setItem('token', data.loginUser.token);
+        authToken(data.loginUser.token);
         isLoggedVar(true);
       }
     } else {
       console.log(data.loginUser.error);
     }
   }
-  const [loginUser, {loading: loginUserLoading}] = useMutation<loginUserMutation, loginUserMutationVariables>(LOGIN_MUTATION, {onCompleted})
+  const [loginUser, {loading: loginUserLoading, error}] = useMutation<loginUserMutation, loginUserMutationVariables>(LOGIN_MUTATION, {onCompleted})
   const {
     register,
     getValues,
@@ -48,6 +50,7 @@ export const Login: React.FunctionComponent = () => {
     try {
       loginUser({variables: {input: {email, password}}});
     } catch(e) {
+      toast.error(error);
       console.log(e);
     }
   };
