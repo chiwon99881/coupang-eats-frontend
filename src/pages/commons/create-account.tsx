@@ -4,7 +4,10 @@ import logo from '../../images/coupang-eats-logo.png';
 import { UserRole } from '../../constants';
 import { ErrorMessage } from '../../components/errorMessage';
 import gql from 'graphql-tag';
-
+import { useMutation } from '@apollo/client';
+import { createUserMutation, createUserMutationVariables } from '../../__generated__/createUserMutation';
+import { Loading } from '../../components/loading';
+import { useHistory } from 'react-router';
 
 const CREATE_USER_MUTATION = gql`
   mutation createUserMutation($input: CreateUserInput!) {
@@ -26,16 +29,37 @@ interface FormValues {
   role: UserRole;
 }
 
-export const CreateAccount = () => {
+export const CreateAccount: React.FC = () => {
+  const history = useHistory();
   const {
     register,
     formState: { isValid, errors },
     handleSubmit,
   } = useForm<FormValues>({ mode: 'onChange' })
 
+  const onCompleted = (data: createUserMutation) => {
+    const { createUser: {ok, error, user} } = data;
+    if(ok) {
+      if(user) {
+        setTimeout(() => {
+          history.push("/")
+        }, 3000);
+      }
+    } else {
+      console.log(error);
+    }
+  }
+
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log(data);
+    try {
+      const { email, password, phone, address, role } = data;
+      createUser({variables: {input: {email, password, phone, address, role}}});
+    } catch(error) {
+      console.log(error);
+    }
   };
+
+  const [createUser, {loading: createUserLoading}] = useMutation<createUserMutation, createUserMutationVariables>(CREATE_USER_MUTATION, {onCompleted})
 
   return (
     <div className="container mx-auto h-screen flex flex-col items-center">
@@ -100,7 +124,7 @@ export const CreateAccount = () => {
             })}
           </select>
           {errors.role?.type === "required" && <ErrorMessage message={'Role is required.'} />}
-          <button type={'submit'} className={`w-full bg-blue-300 p-4 rounded-sm text-white font-medium ${isValid ? 'bg-opacity-100' : 'bg-opacity-30 pointer-events-none'}`}>Create account</button>
+          {createUserLoading ? <Loading /> : <button type={'submit'} className={`w-full bg-blue-300 p-4 rounded-sm text-white font-medium ${isValid ? 'bg-opacity-100' : 'bg-opacity-30 pointer-events-none'}`}>Create account</button>}
         </form>
       </div>
     </div>
