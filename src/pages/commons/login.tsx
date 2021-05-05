@@ -9,6 +9,7 @@ import { loginUserMutation, loginUserMutationVariables } from '../../__generated
 import { authToken, isLoggedVar } from '../../apollo';
 import { Loading} from "../../components/loading";
 import { toast } from 'react-toastify';
+import { Helmet } from 'react-helmet';
 
 const LOGIN_MUTATION = gql`
   mutation loginUserMutation($input: LoginInput!) {
@@ -55,6 +56,10 @@ export const Login: React.FunctionComponent = () => {
     }
   };
   return (
+    <>
+    <Helmet>
+      <title>Login</title>
+    </Helmet>
     <div className="container h-screen mx-auto flex flex-col items-center">
       <div
         style={{
@@ -115,5 +120,6 @@ export const Login: React.FunctionComponent = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };

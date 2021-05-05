@@ -10,6 +10,7 @@ import { Loading } from '../../components/loading';
 import { useHistory } from 'react-router';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 
 const CREATE_USER_MUTATION = gql`
   mutation createUserMutation($input: CreateUserInput!) {
@@ -66,6 +67,8 @@ export const CreateAccount: React.FC = () => {
   const [createUser, {loading: createUserLoading}] = useMutation<createUserMutation, createUserMutationVariables>(CREATE_USER_MUTATION, {onCompleted})
 
   return (
+    <>
+    <Helmet><title>Create Account</title></Helmet>
     <div className="container mx-auto h-screen flex flex-col items-center">
       <div
         style={{
@@ -134,5 +137,6 @@ export const CreateAccount: React.FC = () => {
         </form>
       </div>
     </div>
+    </>
   );
 };

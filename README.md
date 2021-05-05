@@ -62,3 +62,11 @@ codegen script: "apollo client:codegen src/__generated__ --target=typescript --o
   ```
 
 - #15 Home (me query)
+
+- #16 Header 1
+
+  - [x] Home Button
+  - [x] Search
+  - [x] Fav
+  - [x] orderlist
+  - [x] profile
