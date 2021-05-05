@@ -9,7 +9,7 @@ import { UserRole } from "./globalTypes";
 // GraphQL query operation: meQuery
 // ====================================================
 
-export interface meQuery_me {
+export interface meQuery_me_user {
   __typename: "User";
   id: number;
   email: string;
@@ -18,6 +18,13 @@ export interface meQuery_me {
   phone: string;
   address: string;
   verified: boolean;
+}
+
+export interface meQuery_me {
+  __typename: "MeOutput";
+  ok: boolean;
+  error: string | null;
+  user: meQuery_me_user | null;
 }
 
 export interface meQuery {

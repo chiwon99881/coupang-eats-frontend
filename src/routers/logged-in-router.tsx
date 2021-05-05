@@ -3,21 +3,28 @@ import { Route, Switch } from 'react-router-dom';
 import { Home } from '../pages/commons/home';
 import { Header } from '../pages/commons/header';
 import { NotFound } from '../pages/commons/404';
+import { Search } from '../pages/commons/search';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 const LoggedInRoutes = () => (
-  <Switch>
-    <Route path={'/'} exact={true}>
-      <Home />
-    </Route>
-    <Route path={'*'}>
-      <NotFound />
-    </Route>
-  </Switch>
+  <>
+    <Header />
+    <Switch>
+      <Route path={'/'} exact={true}>
+        <Home />
+      </Route>
+      <Route path={'/search'} exact={true}>
+        <Search />
+      </Route>
+      <Route>
+        <NotFound />
+      </Route>
+    </Switch>
+  </>
 );
 
 export const LoggedInRouter = () => (
-  <>
-    <Header />
+  <Router>
     <LoggedInRoutes />
-  </>
+  </Router>
 );
