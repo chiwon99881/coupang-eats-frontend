@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import React, { useState } from 'react';
 import { useLocation } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Loading } from '../../components/loading';
 import {
   searchQuery,
@@ -46,7 +47,6 @@ export const Search: React.FunctionComponent = () => {
   const { search } = useLocation<iSearchTerm>();
   const [_, searchTerm] = search.split('=');
   const [page, setPage] = useState<number>(1);
-  console.log(decodeURI(searchTerm));
   const {
     data: searchData,
     error: searchError,
@@ -68,12 +68,24 @@ export const Search: React.FunctionComponent = () => {
     );
   } else {
     return (
-      <div className='container w-full max-w-full mt-32 h-screen'>
-        <div className='h-1/2 flex flex-col'>
-          <span className='text-4xl font-semibold text-black'>Dishes</span>
-        </div>
-        <div className='h-1/2 flex flex-col'>
-          <span className='text-4xl font-semibold text-black'>Restaurants</span>
+      <div className='container w-full max-w-full px-10 mt-32 h-screen'>
+        <div className='h-full w-full'>
+          <div className='w-full grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3'>
+            {searchData?.search.dishes && searchData.search.dishCount! > 0 ? searchData?.search.dishes.map(dish => {
+              return (
+              <Link to={`/dish/${dish.id}`}>
+                <div className='flex flex-col items-center'>
+                  <img src={dish.image} alt={dish.name} className="w-64 h-64 rounded-full" />
+                  <div className="text-2xl mt-3">{dish.name}</div>
+                  <div>{dish.price} 원</div>
+                </div>
+              </Link>
+              )
+            }) : <div className="h-full w-full felx items-center justify-center">
+                <span className="text-7xl font-semibold" >No Result...</span>
+              </div>
+            }
+          </div>
         </div>
       </div>
     );
