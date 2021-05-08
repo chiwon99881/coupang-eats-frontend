@@ -72,3 +72,5 @@ codegen script: "apollo client:codegen src/__generated__ --target=typescript --o
   - [x] profile
 
 - #17 Header Search 1
+
+- #18 Header, Home Refactor

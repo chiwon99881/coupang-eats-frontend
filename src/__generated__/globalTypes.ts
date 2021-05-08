@@ -28,6 +28,11 @@ export interface LoginInput {
   password: string;
 }
 
+export interface SearchInput {
+  key: string;
+  page?: number | null;
+}
+
 //==============================================================
 // END Enums and Input Objects
 //==============================================================
