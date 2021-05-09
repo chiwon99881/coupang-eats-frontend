@@ -1,4 +1,6 @@
 import { useQuery } from '@apollo/client';
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import gql from 'graphql-tag';
 import React, { useState } from 'react';
 import { useLocation } from 'react-router';
@@ -70,7 +72,7 @@ export const Search: React.FunctionComponent = () => {
     return (
       <div className='container w-full max-w-full px-10 mt-32 h-screen'>
         <div className='h-full w-full'>
-          <div className='w-full grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3'>
+          <div className='w-full grid grid-cols-1 gap-24 sm:grid-cols-2 md:grid-cols-3'>
             {searchData?.search.dishes && searchData.search.dishCount! > 0 ? searchData?.search.dishes.map(dish => {
               return (
               <Link to={`/dish/${dish.id}`}>
@@ -85,6 +87,18 @@ export const Search: React.FunctionComponent = () => {
                 <span className="text-7xl font-semibold" >No Result...</span>
               </div>
             }
+          </div>
+          <div className="mt-10 flex items-center justify-center">
+            <div className="w-1/4 flex items-center justify-center">
+              {page === 1 ? "" : 
+              <div className="cursor-pointer" onClick={() => setPage(currentPage => currentPage-1)}>
+                <FontAwesomeIcon icon={faArrowLeft} className="text-3xl text-yellow-900" />
+              </div>}
+              <div className="px-6 text-3xl text-red-500">{page}</div>
+              {page * 6 < searchData?.search.dishCount! ? <div className="cursor-pointer" onClick={() => setPage(currentPage => currentPage+1)}>
+                <FontAwesomeIcon icon={faArrowRight} className="text-3xl text-yellow-900" />
+              </div>: ""}
+            </div>
           </div>
         </div>
       </div>
