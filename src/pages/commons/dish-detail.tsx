@@ -1,7 +1,10 @@
 import { useQuery } from '@apollo/client';
+import { faHeart } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import gql from 'graphql-tag';
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Loading } from '../../components/loading';
 import {
   getDishQuery,
@@ -14,6 +17,7 @@ const GET_DISH = gql`
       ok
       error
       dish {
+        id
         name
         description
         price
@@ -50,6 +54,7 @@ interface IParams {
 
 export const DishDetail: React.FunctionComponent = () => {
   const { id: dishId } = useParams<IParams>();
+  const [isLike, setIsLike] = useState<boolean>(false);
   const {
     loading: getDishLoading,
     error: getDishError,
@@ -107,7 +112,14 @@ export const DishDetail: React.FunctionComponent = () => {
           </div>
         </div>
         <div className="w-full h-1/2 flex items-center justify-center">
-          <div className="p-5 border border-gray-300 rounded-lg mb-10 hover:border-black transition-colors cursor-pointer">Start order</div>
+          <div className="py-5 px-6 border border-gray-300 rounded-lg mb-10 hover:border-black cursor-pointer mr-5">
+            <FontAwesomeIcon icon={faHeart} className={`${isLike ? 'text-red-500' : 'text-red-50'} w-32`} />
+          </div>
+          <Link to={`order/${getDishData?.getDish.dish?.id}`}>
+            <div className="p-5 border border-gray-300 rounded-lg mb-10 hover:border-black transition-colors cursor-pointer">
+              Start order
+            </div>
+          </Link>
         </div>
       </div>
     );

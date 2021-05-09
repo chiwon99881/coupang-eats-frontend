@@ -82,3 +82,5 @@ codegen script: "apollo client:codegen src/__generated__ --target=typescript --o
 - #21 Get Dish 1
 
 - #22 Get Dish 2
+
+- #23 Get Dish 3

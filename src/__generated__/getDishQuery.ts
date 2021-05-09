@@ -42,6 +42,7 @@ export interface getDishQuery_getDish_dish_dishOption {
 
 export interface getDishQuery_getDish_dish {
   __typename: "Dish";
+  id: number;
   name: string;
   description: string;
   price: number;

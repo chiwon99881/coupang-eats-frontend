@@ -14,6 +14,19 @@ const ME = gql`
         phone
         address
         verified
+        favFood {
+          id
+          name
+          description
+          price
+          image
+          restaurant {
+            id
+            name
+            tel
+            address
+          }
+        }
       }
     }
   }

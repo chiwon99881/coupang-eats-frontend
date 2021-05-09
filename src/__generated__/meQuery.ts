@@ -9,6 +9,24 @@ import { UserRole } from "./globalTypes";
 // GraphQL query operation: meQuery
 // ====================================================
 
+export interface meQuery_me_user_favFood_restaurant {
+  __typename: "Restaurant";
+  id: number;
+  name: string;
+  tel: string;
+  address: string;
+}
+
+export interface meQuery_me_user_favFood {
+  __typename: "Dish";
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  restaurant: meQuery_me_user_favFood_restaurant;
+}
+
 export interface meQuery_me_user {
   __typename: "User";
   id: number;
@@ -18,6 +36,7 @@ export interface meQuery_me_user {
   phone: string;
   address: string;
   verified: boolean;
+  favFood: meQuery_me_user_favFood[] | null;
 }
 
 export interface meQuery_me {
