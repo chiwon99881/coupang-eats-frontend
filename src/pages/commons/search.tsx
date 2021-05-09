@@ -47,6 +47,7 @@ interface iSearchTerm {
 
 export const Search: React.FunctionComponent = () => {
   const { search } = useLocation<iSearchTerm>();
+  // eslint-disable-next-line
   const [_, searchTerm] = search.split('=');
   const [page, setPage] = useState<number>(1);
   const {
@@ -73,9 +74,9 @@ export const Search: React.FunctionComponent = () => {
       <div className='container w-full max-w-full px-10 mt-32 h-screen'>
         <div className='h-full w-full'>
           <div className='w-full grid grid-cols-1 gap-24 sm:grid-cols-2 md:grid-cols-3'>
-            {searchData?.search.dishes && searchData.search.dishCount! > 0 ? searchData?.search.dishes.map(dish => {
+            {searchData?.search.dishes && searchData.search.dishCount! > 0 ? searchData?.search.dishes.map((dish, index) => {
               return (
-              <Link to={`/dish/${dish.id}`}>
+              <Link to={`/dish/${dish.id}`} key={index}>
                 <div className='flex flex-col items-center'>
                   <img src={dish.image} alt={dish.name} className="w-64 h-64 rounded-full" />
                   <div className="text-2xl mt-3">{dish.name}</div>

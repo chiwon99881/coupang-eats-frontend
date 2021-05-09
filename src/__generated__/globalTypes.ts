@@ -23,6 +23,10 @@ export interface CreateUserInput {
   avatar?: string | null;
 }
 
+export interface GetDishInput {
+  id: number;
+}
+
 export interface LoginInput {
   email: string;
   password: string;
