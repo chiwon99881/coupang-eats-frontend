@@ -2,7 +2,7 @@ import { meQuery } from './../__generated__/meQuery';
 import { useQuery } from '@apollo/client';
 import { gql } from 'graphql-tag';
 
-const ME = gql`
+export const ME = gql`
   query meQuery {
     me {
       ok

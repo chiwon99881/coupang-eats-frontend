@@ -86,3 +86,5 @@ codegen script: "apollo client:codegen src/__generated__ --target=typescript --o
 - #23 Get Dish 3
 
 - #24 Like/Unlike Dish 1
+
+- #25 Like/Unlike Dish 2

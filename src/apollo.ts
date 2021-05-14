@@ -34,6 +34,13 @@ const cache = new InMemoryCache({
         },
       },
     },
+    User: {
+      fields: {
+        favFood: {
+          merge: false,
+        },
+      },
+    },
   },
 });
 

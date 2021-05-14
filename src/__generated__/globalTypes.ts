@@ -41,6 +41,10 @@ export interface SearchInput {
   page?: number | null;
 }
 
+export interface UnlikeDishInput {
+  id: number;
+}
+
 //==============================================================
 // END Enums and Input Objects
 //==============================================================
