@@ -1,3 +1,4 @@
+import { meQuery } from './../__generated__/meQuery';
 import { useQuery } from '@apollo/client';
 import { gql } from 'graphql-tag';
 
@@ -33,7 +34,7 @@ const ME = gql`
 `;
 
 const useMe = () => {
-  return useQuery(ME);
+  return useQuery<meQuery>(ME);
 };
 
 export default useMe;

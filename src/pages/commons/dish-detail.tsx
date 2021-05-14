@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import gql from 'graphql-tag';
@@ -6,10 +6,14 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Loading } from '../../components/loading';
+import useMe from '../../hooks/useMe';
 import {
   getDishQuery,
   getDishQueryVariables,
 } from '../../__generated__/getDishQuery';
+import { likeDishMutation, likeDishMutationVariables } from '../../__generated__/likeDishMutation';
+import { meQuery } from '../../__generated__/meQuery';
+
 
 const GET_DISH = gql`
   query getDishQuery($input: GetDishInput!) {
@@ -48,13 +52,37 @@ const GET_DISH = gql`
   }
 `;
 
+const LIKE_DISH = gql`
+  mutation likeDishMutation($input: LikeDishInput!) {
+    likeDish(input: $input) {
+      ok
+      error
+    }
+  }
+`;
+
 interface IParams {
   id: string;
 }
 
 export const DishDetail: React.FunctionComponent = () => {
   const { id: dishId } = useParams<IParams>();
-  const [isLike, setIsLike] = useState<boolean>(false);
+  const { data: meData , error: meError, loading: meLoading } = useMe();
+  console.log(meData?.me.user?.favFood, dishId);
+  const isLiked = () : boolean => {
+    let checkIsLiked = false;
+    const favFoods = meData?.me.user?.favFood;
+    if(!favFoods) {
+      return checkIsLiked;
+    }
+    favFoods.map(food => {
+      if(food.id === parseInt(dishId)) {
+        checkIsLiked = true;
+      }
+    })
+    return checkIsLiked;
+  }
+  const [isLike, setIsLike] = useState<boolean>(isLiked);
   const {
     loading: getDishLoading,
     error: getDishError,
@@ -62,8 +90,11 @@ export const DishDetail: React.FunctionComponent = () => {
   } = useQuery<getDishQuery, getDishQueryVariables>(GET_DISH, {
     variables: { input: { id: parseInt(dishId) } },
   });
-  console.log(getDishData);
-  if (getDishLoading || getDishError) {
+  const [likeDishMutation, {loading: likeDishLoading, error: likeDishError} ] = useMutation<likeDishMutation, likeDishMutationVariables>(LIKE_DISH);
+  const likeDish = () => {
+
+  }
+  if (getDishLoading || getDishError || meError || meLoading) {
     return (
       <div className='container w-full max-w-full h-screen flex items-center justify-center'>
         <Loading />
@@ -112,7 +143,7 @@ export const DishDetail: React.FunctionComponent = () => {
           </div>
         </div>
         <div className="w-full h-1/2 flex items-center justify-center">
-          <div className="py-5 px-6 border border-gray-300 rounded-lg mb-10 hover:border-black cursor-pointer mr-5">
+          <div className="py-5 px-6 border border-gray-300 rounded-lg mb-10 hover:border-black cursor-pointer mr-5" onClick={likeDish}>
             <FontAwesomeIcon icon={faHeart} className={`${isLike ? 'text-red-500' : 'text-red-50'} w-32`} />
           </div>
           <Link to={`order/${getDishData?.getDish.dish?.id}`}>

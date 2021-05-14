@@ -27,6 +27,10 @@ export interface GetDishInput {
   id: number;
 }
 
+export interface LikeDishInput {
+  id: number;
+}
+
 export interface LoginInput {
   email: string;
   password: string;
