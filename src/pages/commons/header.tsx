@@ -18,7 +18,7 @@ export const Header: React.FunctionComponent = () => {
       </div>
       <div className='w-2/4' />
       <div className='flex items-center justify-evenly w-1/4 pr-10 pl-24'>
-        <Link to={'/fav'}>
+        <Link to={'/my-fav'}>
           <FontAwesomeIcon icon={faHeart} className='text-3xl text-red-500' />
         </Link>
         <Link to={'/my-orders'}>

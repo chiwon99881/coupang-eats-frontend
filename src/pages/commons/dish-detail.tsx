@@ -101,7 +101,6 @@ export const DishDetail: React.FunctionComponent = () => {
   console.log(isLike);
   useEffect(() => {
     const favFoods = meData?.me.user?.favFood;
-    console.log("run?", favFoods);
     if(favFoods && favFoods.length > 0) {
       for(const food of favFoods) {
         if(food.id === parseInt(dishId)) {
@@ -113,7 +112,7 @@ export const DishDetail: React.FunctionComponent = () => {
     } else if(favFoods && favFoods.length === 0) {
       setIsLike(false);
     }
-  }, [meData])
+  }, [dishId, meData])
   if (getDishLoading || getDishError || meError || meLoading) {
     return (
       <div className='container w-full max-w-full h-screen flex items-center justify-center'>
