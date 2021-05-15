@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import React, { useState } from 'react';
 import { useLocation } from 'react-router';
 import { Loading } from '../../components/loading';
@@ -8,36 +7,8 @@ import {
   searchQuery,
   searchQueryVariables,
 } from '../../__generated__/searchQuery';
-
-const SEARCH = gql`
-  query searchQuery($input: SearchInput!) {
-    search(input: $input) {
-      ok
-      error
-      restaurants {
-        id
-        name
-        description
-        coverImage
-        address
-        tel
-        category {
-          id
-          name
-        }
-      }
-      restaurantsCount
-      dishes {
-        id
-        name
-        description
-        price
-        image
-      }
-      dishCount
-    }
-  }
-`;
+import { Helmet } from 'react-helmet';
+import { SEARCH } from '../../gql/all-gql';
 
 interface iSearchTerm {
   search: string;
@@ -69,6 +40,9 @@ export const Search: React.FunctionComponent = () => {
   } else {
     return (
       <div className='container w-full max-w-full px-10 mt-32 h-screen'>
+        <Helmet>
+          <title>{`Search Food || ${decodeURI(searchTerm)}`}</title>
+        </Helmet>
         <DishList setPage={setPage} page={page} dishes={searchData} />
       </div>
     );

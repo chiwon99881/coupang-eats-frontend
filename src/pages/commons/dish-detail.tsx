@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import gql from 'graphql-tag';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
@@ -14,60 +13,11 @@ import {
 import { likeDishMutation, likeDishMutationVariables } from '../../__generated__/likeDishMutation';
 import { unlikeDishMutation, unlikeDishMutationVariables } from '../../__generated__/unlikeDishMutation';
 import { ME } from '../../hooks/useMe';
-const GET_DISH = gql`
-  query getDishQuery($input: GetDishInput!) {
-    getDish(input: $input) {
-      ok
-      error
-      dish {
-        id
-        name
-        description
-        price
-        image
-        restaurant {
-          id
-          name
-          description
-          coverImage
-          address
-          tel
-          owner {
-            id
-            email
-            phone
-          }
-        }
-        dishOption {
-          option
-          choice {
-            kind
-            extraPrice
-          }
-          extraPrice
-        }
-      }
-    }
-  }
-`;
+import { Helmet } from 'react-helmet';
+import { GET_DISH, LIKE_DISH, UNLIKE_DISH } from '../../gql/all-gql';
 
-const LIKE_DISH = gql`
-  mutation likeDishMutation($input: LikeDishInput!) {
-    likeDish(input: $input) {
-      ok
-      error
-    }
-  }
-`;
 
-const UNLIKE_DISH = gql`
-  mutation unlikeDishMutation($input: UnlikeDishInput!) {
-    unlikeDish(input: $input) {
-      ok
-      error
-    }
-  }
-`;
+
 
 interface IParams {
   id: string;
@@ -100,11 +50,13 @@ export const DishDetail: React.FunctionComponent = () => {
   }
   console.log(isLike);
   useEffect(() => {
+    console.log(meData);
     const favFoods = meData?.me.user?.favFood;
     if(favFoods && favFoods.length > 0) {
       for(const food of favFoods) {
         if(food.id === parseInt(dishId)) {
             setIsLike(true);
+            return;
         } else {
           setIsLike(false);
         }
@@ -121,7 +73,10 @@ export const DishDetail: React.FunctionComponent = () => {
     );
   } else {
     return (
-      <div className='container max-w-full w-full h-screen mt-32 px-10 flex flex-col'>
+      <div className='container w-full max-w-full h-screen flex items-center justify-center'>
+        <Helmet>
+          <title>{`Dish Detail || ${getDishData?.getDish.dish?.name}`}</title>
+        </Helmet>
         <div className='w-full flex items-center justify-center h-1/2'>
           <div className='w-1/2 flex items-center justify-center'>
             <img src={getDishData?.getDish.dish?.image} alt={"food"} className="rounded-full w-96 h-96" />
@@ -165,7 +120,7 @@ export const DishDetail: React.FunctionComponent = () => {
           <div className="py-5 px-6 border border-gray-300 rounded-lg mb-10 hover:border-black cursor-pointer mr-5" onClick={toggleLikeDish}>
             <FontAwesomeIcon icon={faHeart} className={`${isLike ? 'text-red-500' : 'text-red-50'} w-32`} />
           </div>
-          <Link to={`order/${getDishData?.getDish.dish?.id}`}>
+          <Link to={`/order/${getDishData?.getDish.dish?.id}`}>
             <div className="p-5 border border-gray-300 rounded-lg mb-10 hover:border-black transition-colors cursor-pointer">
               Start order
             </div>

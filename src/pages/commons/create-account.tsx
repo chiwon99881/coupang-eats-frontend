@@ -3,7 +3,6 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import logo from '../../images/coupang-eats-logo.png';
 import { UserRole } from '../../constants';
 import { ErrorMessage } from '../../components/errorMessage';
-import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 import { createUserMutation, createUserMutationVariables } from '../../__generated__/createUserMutation';
 import { Loading } from '../../components/loading';
@@ -11,18 +10,8 @@ import { useHistory } from 'react-router';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
+import { CREATE_USER_MUTATION } from '../../gql/all-gql';
 
-const CREATE_USER_MUTATION = gql`
-  mutation createUserMutation($input: CreateUserInput!) {
-    createUser(input: $input) {
-      ok
-      error
-      user {
-        id
-      }
-    }
-  }
-`;
 
 interface FormValues {
   email: string;

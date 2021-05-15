@@ -3,23 +3,14 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import logo from '../../images/coupang-eats-logo.png';
 import { ErrorMessage } from '../../components/errorMessage';
-import gql from 'graphql-tag';
 import { useMutation } from '@apollo/client';
 import { loginUserMutation, loginUserMutationVariables } from '../../__generated__/loginUserMutation';
 import { authToken, isLoggedVar } from '../../apollo';
 import { Loading} from "../../components/loading";
 import { toast } from 'react-toastify';
 import { Helmet } from 'react-helmet';
+import { LOGIN_MUTATION } from '../../gql/all-gql';
 
-const LOGIN_MUTATION = gql`
-  mutation loginUserMutation($input: LoginInput!) {
-    loginUser(input: $input) {
-      ok
-      error
-      token
-    }
-  }
-`
 
 interface FormValues {
   email: string;

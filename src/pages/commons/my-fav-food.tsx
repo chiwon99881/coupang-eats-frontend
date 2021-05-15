@@ -1,6 +1,7 @@
-import { faAngleLeft, faAngleRight, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { Loading } from '../../components/loading';
 import useMe from '../../hooks/useMe';
@@ -18,7 +19,10 @@ export const MyFavFood: React.FunctionComponent = () => {
   } else {
     return (
       <div className='container w-full max-w-full px-10 mt-32 h-screen'>
-        <div className='container w-full max-w-full h-auto text-xl'>
+          <Helmet>
+              <title>My Favourite</title>
+          </Helmet>
+        <div className='container w-full max-w-full h-auto text-4xl font-bold text-gray-700'>
           {`Your Favourite food:`} {meData?.me.user?.favFood && meData.me.user.favFood.length > 0 ? <span className="text-yellow-900">{`${foodIndex+1}/${meData?.me.user?.favFood?.length}`}</span> : "0"}
         </div>
         {meData?.me.user?.favFood && meData.me.user.favFood.length > 0 && 
@@ -29,7 +33,7 @@ export const MyFavFood: React.FunctionComponent = () => {
           <div className='w-2/4 mx-auto  h-full relative items-center justify-center'>
             {meData.me.user.favFood.map((food,index) => {
                 return (
-                    <div className={`${foodIndex === index ? 'opacity-100': 'opacity-0 pointer-events-none'} w-full absolute top-0 bottom-0`}>
+                    <div className={`transition-opacity ${foodIndex === index ? 'opacity-100': 'opacity-0 pointer-events-none'} w-full absolute top-0 bottom-0`}>
                         <div className={`w-full flex flex-col h-full items-center justify-center`} key={index}>
                             <Link to={`/dish/${food.id}`} className="w-2/3 flex flex-col h-full items-center justify-center">
                                 <img src={food.image} className="w-full h-4/5 rounded-md" alt={"foodImage"} />
