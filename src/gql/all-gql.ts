@@ -106,3 +106,12 @@ export const SEARCH = gql`
     }
   }
 `;
+
+export const ORDER = gql`
+  mutation orderMutation($input: OrderInput!) {
+    order(input: $input) {
+      ok
+      error
+    }
+  }
+`;

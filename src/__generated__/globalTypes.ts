@@ -23,6 +23,12 @@ export interface CreateUserInput {
   avatar?: string | null;
 }
 
+export interface DishOptionInputType {
+  option: string;
+  choice?: OptionChoiceInputType[] | null;
+  extraPrice?: number | null;
+}
+
 export interface GetDishInput {
   id: number;
 }
@@ -34,6 +40,16 @@ export interface LikeDishInput {
 export interface LoginInput {
   email: string;
   password: string;
+}
+
+export interface OptionChoiceInputType {
+  kind: string;
+  extraPrice?: number | null;
+}
+
+export interface OrderInput {
+  dishesId: number[];
+  dishOption?: DishOptionInputType[] | null;
 }
 
 export interface SearchInput {

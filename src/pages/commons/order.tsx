@@ -1,12 +1,14 @@
-import React from 'react';
-import { useQuery } from '@apollo/client';
+import React, { useState } from 'react';
+import { useMutation, useQuery } from '@apollo/client';
 import { useParams } from 'react-router';
-import { GET_DISH } from '../../gql/all-gql';
+import { GET_DISH, ORDER } from '../../gql/all-gql';
 import {
   getDishQuery,
   getDishQueryVariables,
 } from '../../__generated__/getDishQuery';
+import { orderMutation, orderMutationVariables } from '../../__generated__/orderMutation';
 import { Loading } from '../../components/loading';
+import { OrderInput, DishOptionInputType } from '../../__generated__/globalTypes';
 
 interface IParams {
   dishId: string;
@@ -14,6 +16,11 @@ interface IParams {
 
 export const Order: React.FunctionComponent = () => {
   const { dishId } = useParams<IParams>();
+  const [ selected, setSelected ] = useState<DishOptionInputType[]>([]);
+  const orderInput: OrderInput = {
+    dishesId: [+dishId],
+    dishOption: selected
+  };
   const {
     data: getDishData,
     loading: getDishLoading,
@@ -21,7 +28,20 @@ export const Order: React.FunctionComponent = () => {
   } = useQuery<getDishQuery, getDishQueryVariables>(GET_DISH, {
     variables: { input: { id: parseInt(dishId) } },
   });
-  console.log(getDishData);
+  const [orderMutation, {loading: orderLoading, error: orderError}] = useMutation<orderMutation, orderMutationVariables>(ORDER)
+  const setNoChioceOption = (option: string, price: number | null, index: number) => {
+    const addOption: DishOptionInputType = {
+      option,
+      extraPrice: price
+    }
+    if(Boolean(selected.find(it => it.option === option))) {
+      setSelected(prevSelected => (
+        prevSelected.filter(selected => selected.option !== option)
+      ));
+    } else {
+      setSelected(prevSelected => [...prevSelected, addOption]);
+    }
+  }
   if (getDishLoading || getDishError) {
     return (
       <div className='container w-full max-w-full h-screen flex items-center justify-center'>
@@ -39,7 +59,7 @@ export const Order: React.FunctionComponent = () => {
             <div className="border border-gray-300 rounded-lg p-5 w-full">
                 <span className="text-xs text-gray-700">Main</span>
                 <div className="flex w-full items-center mt-5">
-                    <div className="w-5 h-5 border border-gray-400 mr-3"></div>
+                    <div className="w-5 h-5 border border-gray-400 mr-3 bg-yellow-900"></div>
                     <span>{`${getDishData?.getDish.dish?.name}  -  ₩ ${getDishData?.getDish.dish?.price}`}</span>
                 </div>
             </div>
@@ -49,8 +69,10 @@ export const Order: React.FunctionComponent = () => {
                   {getDishData?.getDish.dish?.dishOption && getDishData.getDish.dish.dishOption.map((option, index) => {
                       if(!option.choice) {
                         return (
-                          <div className="flex w-full items-center mt-5" key={index}>
-                            <div className="w-5 h-5 border border-gray-400 mr-3"></div>
+                          <div className={`flex w-full items-center mt-5`} key={index}>
+                            <div 
+                              className={`${Boolean(selected.find(it => it.option === option.option)) ? 'bg-yellow-900' : 'bg-white'} w-5 h-5 border border-gray-400 mr-3 cursor-pointer`} 
+                              onClick={() => setNoChioceOption(option.option, option.extraPrice, index)} />
                             <span>{`${option.option}  -  ₩  ${option.extraPrice}`}</span>
                           </div>
                           )
