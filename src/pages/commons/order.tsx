@@ -31,23 +31,58 @@ export const Order: React.FunctionComponent = () => {
   } else {
     return (
     <>
-      <div className='container w-full max-w-full px-10 mt-32 h-auto max-h-full flex items-center'>
+      <div className='container w-full max-w-full px-10 mt-32 h-4/5 max-h-full flex items-center'>
         <div className="w-1/2 h-full flex items-center">
             <img src={getDishData?.getDish.dish?.image} className="w-4/5 h-4/5 rounded-lg shadow-2xl" alt={"dishImage"}/>
         </div>
         <div className="w-1/2 h-full flex flex-col p-12">
-            <div className="border border-gray-300 rounded-lg p-10 w-full">
+            <div className="border border-gray-300 rounded-lg p-5 w-full">
                 <span className="text-xs text-gray-700">Main</span>
                 <div className="flex w-full items-center mt-5">
                     <div className="w-5 h-5 border border-gray-400 mr-3"></div>
                     <span>{`${getDishData?.getDish.dish?.name}  -  ₩ ${getDishData?.getDish.dish?.price}`}</span>
                 </div>
             </div>
-            <div className="border border-gray-300 rounded-lg p-10 w-full mt-20">
-                <span className="text-xs text-gray-700">Option</span>
-                <div className="flex w-full items-center mt-5">
-                    
-                </div>
+            <div className="flex flex-col mt-5">
+              <div className="border border-gray-300 rounded-lg p-5 w-full">
+                  <span className="text-xs text-gray-700">Option</span>
+                  {getDishData?.getDish.dish?.dishOption && getDishData.getDish.dish.dishOption.map((option, index) => {
+                      if(!option.choice) {
+                        return (
+                          <div className="flex w-full items-center mt-5" key={index}>
+                            <div className="w-5 h-5 border border-gray-400 mr-3"></div>
+                            <span>{`${option.option}  -  ₩  ${option.extraPrice}`}</span>
+                          </div>
+                          )
+                      } else {
+                        return null;
+                      }
+                  })}
+              </div>
+              <div className="border border-gray-300 rounded-lg p-5 w-full mt-5">
+                  <span className="text-xs text-gray-700">Choice option</span>
+                  {getDishData?.getDish.dish?.dishOption && getDishData.getDish.dish.dishOption.map((option, index) => {
+                      if(!option.choice) {
+                        return null;
+                      } else {
+                        return (
+                          <div className="flex flex-col w-full justify-center mt-5" key={index}>
+                            <span>{option.option}</span>
+                            <div className="flex items-center w-full">
+                              {option.choice && option.choice.map((choice, index) => {
+                                return (
+                                  <div className="flex w-full items-center mt-2" key={index}>
+                                    <div className="w-5 h-5 border border-gray-400 mr-3"></div>
+                                    <span>{`${choice.kind}  -  ₩  ${choice.extraPrice || 0}`}</span>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          </div>
+                          )
+                      }
+                  })}
+              </div>
             </div>
         </div>
       </div>

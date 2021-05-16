@@ -73,7 +73,7 @@ export const DishDetail: React.FunctionComponent = () => {
     );
   } else {
     return (
-      <div className='container w-full max-w-full h-screen flex items-center justify-center'>
+      <div className='container w-full max-w-full px-10 mt-32 h-screen'>
         <Helmet>
           <title>{`Dish Detail || ${getDishData?.getDish.dish?.name}`}</title>
         </Helmet>

@@ -92,3 +92,5 @@ codegen script: "apollo client:codegen src/__generated__ --target=typescript --o
 - #26 My Favfood
 
 - #27 Order 1
+
+- #28 Order 2
