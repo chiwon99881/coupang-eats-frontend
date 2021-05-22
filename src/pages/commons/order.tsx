@@ -14,13 +14,21 @@ interface IParams {
   dishId: string;
 }
 
+
+interface ChoiceTempProps {
+  id?: number;
+  option?: string;
+  choice?: any;
+  extraPrice?: number | null;
+}
+
 export const Order: React.FunctionComponent = () => {
   const { dishId } = useParams<IParams>();
-  const [ selected, setSelected ] = useState<DishOptionInputType[]>([]);
-  const orderInput: OrderInput = {
-    dishesId: [+dishId],
-    dishOption: selected
-  };
+  const [ choiceTemp, setChoiceTemp ] = useState<ChoiceTempProps[]>([]);
+  // const orderInput: OrderInput = {
+  //   dishesId: [+dishId],
+  //   dishOption: selected
+  // };
   const {
     data: getDishData,
     loading: getDishLoading,
@@ -29,18 +37,73 @@ export const Order: React.FunctionComponent = () => {
     variables: { input: { id: parseInt(dishId) } },
   });
   const [orderMutation, {loading: orderLoading, error: orderError}] = useMutation<orderMutation, orderMutationVariables>(ORDER)
-  const setNoChioceOption = (option: string, price: number | null, index: number) => {
-    const addOption: DishOptionInputType = {
+  const setNoChioceOption = (option: string, price: number | null, index:number) => {
+    const addOption: ChoiceTempProps = {
+      id: index,
       option,
       extraPrice: price
     }
-    if(Boolean(selected.find(it => it.option === option))) {
-      setSelected(prevSelected => (
-        prevSelected.filter(selected => selected.option !== option)
+    if(Boolean(choiceTemp.find(it => it.option === option))) {
+      setChoiceTemp(prevChoiceTemp => (
+        prevChoiceTemp.filter(choiceTemp => choiceTemp.option !== option)
       ));
     } else {
-      setSelected(prevSelected => [...prevSelected, addOption]);
+      setChoiceTemp(prevChoiceTemp => [...prevChoiceTemp, addOption]);
     }
+  }
+  const setChioceOption = (option: string, kind: string, price: number | null, index:number) => {
+    let addChoiceOption: ChoiceTempProps = {
+      id:0,
+      option: "",
+      choice: []
+    };
+    if(price) {
+      addChoiceOption = {
+        id: index,
+        option,
+        choice: [
+          {
+            kind,
+            extraPrice: price
+          }
+        ]
+      }
+    } else {
+      addChoiceOption = {
+        id: index,
+        option,
+        choice: [
+          {
+            kind
+          }
+        ]
+      }
+    }
+    console.log(index, Boolean(choiceTemp.find(it => it.id === index)));
+    if(Boolean(choiceTemp.find(it => it.id === index))) {
+      setChoiceTemp(prevTemp => (
+        prevTemp.filter(temp => temp.id !== index)
+      ))
+    } else {
+      setChoiceTemp(prevTemp => {
+        if(prevTemp.find(it => it.option === addChoiceOption.option)) {
+          const newTemp = prevTemp.filter(it => it.option !== addChoiceOption.option);
+          return [...newTemp, addChoiceOption];
+        } else {
+          return [...prevTemp, addChoiceOption];
+        }
+      });
+    }
+  }
+  const handleOrder = () => {
+    let dishOption : any = [];
+    dishOption = choiceTemp.map(opt => {
+      delete opt.id;
+      return opt;
+    });
+    setChoiceTemp([]);
+    console.log(dishOption);
+    
   }
   if (getDishLoading || getDishError) {
     return (
@@ -71,7 +134,7 @@ export const Order: React.FunctionComponent = () => {
                         return (
                           <div className={`flex w-full items-center mt-5`} key={index}>
                             <div 
-                              className={`${Boolean(selected.find(it => it.option === option.option)) ? 'bg-yellow-900' : 'bg-white'} w-5 h-5 border border-gray-400 mr-3 cursor-pointer`} 
+                              className={`${Boolean(choiceTemp.find(it => it.option === option.option)) ? 'bg-yellow-900' : 'bg-white'} w-5 h-5 border border-gray-400 mr-3 cursor-pointer`} 
                               onClick={() => setNoChioceOption(option.option, option.extraPrice, index)} />
                             <span>{`${option.option}  -  ₩  ${option.extraPrice}`}</span>
                           </div>
@@ -93,8 +156,8 @@ export const Order: React.FunctionComponent = () => {
                             <div className="flex items-center w-full">
                               {option.choice && option.choice.map((choice, index) => {
                                 return (
-                                  <div className="flex w-full items-center mt-2" key={index}>
-                                    <div className="w-5 h-5 border border-gray-400 mr-3"></div>
+                                  <div className="flex w-full items-center mt-2" key={index} onClick={() => setChioceOption(option.option, choice.kind, choice.extraPrice, index)}>
+                                    <div className={`${Boolean(choiceTemp.find(it => it.id === index)) ? 'bg-yellow-900' : 'bg-white'} w-5 h-5 border border-gray-400 mr-3 cursor-pointer`}></div>
                                     <span>{`${choice.kind}  -  ₩  ${choice.extraPrice || 0}`}</span>
                                   </div>
                                 )
@@ -109,7 +172,11 @@ export const Order: React.FunctionComponent = () => {
         </div>
       </div>
       <div className="container w-full max-w-full px-10 h-auto flex items-center justify-center">
-        <div className="p-5 mt-6 border border-gray-300 rounded-md hover:border-black cursor-pointer transition-colors">Order</div>
+        <div className="p-5 mt-6 border border-gray-300 rounded-md hover:border-black cursor-pointer transition-colors" 
+          onClick={handleOrder}
+        >
+          Order
+        </div>
       </div>
     </>
     );
