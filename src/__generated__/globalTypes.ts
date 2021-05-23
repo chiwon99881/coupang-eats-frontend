@@ -42,6 +42,10 @@ export interface GetDishInput {
   id: number;
 }
 
+export interface GetOrderInput {
+  id: number;
+}
+
 export interface LikeDishInput {
   id: number;
 }

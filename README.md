@@ -100,3 +100,5 @@ codegen script: "apollo client:codegen src/__generated__ --target=typescript --o
 - #30 Order 4
 
 - #31 Order DONE
+
+- #32 Order Detail 1

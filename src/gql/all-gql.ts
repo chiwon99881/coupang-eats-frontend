@@ -131,3 +131,49 @@ export const ORDER = gql`
     }
   }
 `;
+
+export const GET_ORDER = gql`
+  query getOrderQuery($input: GetOrderInput!) {
+    getOrder(input: $input) {
+      ok
+      error
+      order {
+        client {
+          email
+          address
+          phone
+          avatar
+        }
+        rider {
+          email
+          address
+          phone
+          avatar
+        }
+        status
+        dishes {
+          id
+          name
+          description
+          image
+          restaurant {
+            id
+            name
+            description
+            tel
+            address
+          }
+        }
+        totalPrice
+        dishOption {
+          option
+          choice {
+            kind
+            extraPrice
+          }
+          extraPrice
+        }
+      }
+    }
+  }
+`;
