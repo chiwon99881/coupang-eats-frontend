@@ -8,6 +8,7 @@ import { DishDetail } from '../pages/commons/dish-detail';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { MyFavFood } from '../pages/commons/my-fav-food';
 import { Order } from '../pages/commons/order';
+import { OrderDetail } from '../pages/commons/order-detail';
 
 const LoggedInRoutes = () => (
   <>
@@ -27,6 +28,9 @@ const LoggedInRoutes = () => (
       </Route>
       <Route path={'/order/:dishId'} exact={true}>
         <Order />
+      </Route>
+      <Route path={'/order-detail'} exact={true}>
+        <OrderDetail />
       </Route>
       <Route>
         <NotFound />

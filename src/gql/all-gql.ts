@@ -112,6 +112,22 @@ export const ORDER = gql`
     order(input: $input) {
       ok
       error
+      order {
+        id
+        status
+        dishes {
+          name
+          description
+          image
+        }
+        totalPrice
+        dishOption {
+          option
+          choice {
+            kind
+          }
+        }
+      }
     }
   }
 `;

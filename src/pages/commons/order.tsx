@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
-import { useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import { GET_DISH, ORDER } from '../../gql/all-gql';
 import {
   getDishQuery,
@@ -8,7 +8,9 @@ import {
 } from '../../__generated__/getDishQuery';
 import { orderMutation, orderMutationVariables } from '../../__generated__/orderMutation';
 import { Loading } from '../../components/loading';
-import { OrderInput, DishOptionInputType } from '../../__generated__/globalTypes';
+import { Helmet } from 'react-helmet';
+import { toast } from 'react-toastify';
+
 
 interface IParams {
   dishId: string;
@@ -24,11 +26,8 @@ interface ChoiceTempProps {
 
 export const Order: React.FunctionComponent = () => {
   const { dishId } = useParams<IParams>();
+  const history = useHistory();
   const [ choiceTemp, setChoiceTemp ] = useState<ChoiceTempProps[]>([]);
-  // const orderInput: OrderInput = {
-  //   dishesId: [+dishId],
-  //   dishOption: selected
-  // };
   const {
     data: getDishData,
     loading: getDishLoading,
@@ -36,7 +35,18 @@ export const Order: React.FunctionComponent = () => {
   } = useQuery<getDishQuery, getDishQueryVariables>(GET_DISH, {
     variables: { input: { id: parseInt(dishId) } },
   });
-  const [orderMutation, {loading: orderLoading, error: orderError}] = useMutation<orderMutation, orderMutationVariables>(ORDER)
+  const onCompleted = (data: orderMutation) => {
+    if(data.order.ok) {
+      toast.success('Order successfully 🤍')
+        setTimeout(() => {
+          history.push({
+            pathname: '/order-detail',
+            search: `?orderId=${data.order.order.id}`
+          })
+        }, 2500);
+    }
+  }
+  const [orderMutation] = useMutation<orderMutation, orderMutationVariables>(ORDER, {onCompleted})
   const setNoChioceOption = (option: string, price: number | null, index:number) => {
     const addOption: ChoiceTempProps = {
       id: index,
@@ -95,15 +105,18 @@ export const Order: React.FunctionComponent = () => {
       });
     }
   }
-  const handleOrder = () => {
-    let dishOption : any = [];
-    dishOption = choiceTemp.map(opt => {
-      delete opt.id;
-      return opt;
-    });
-    setChoiceTemp([]);
-    console.log(dishOption);
-    
+  const handleOrder = async () => {
+    try {
+      let dishOption : any = [];
+      dishOption = choiceTemp.map(opt => {
+        delete opt.id;
+        return opt;
+      });
+      setChoiceTemp([]);
+      await orderMutation({variables: {input: {dishesId: [+dishId], dishOption}}});
+    } catch(error) {
+      console.log(error);
+    }
   }
   if (getDishLoading || getDishError) {
     return (
@@ -115,6 +128,9 @@ export const Order: React.FunctionComponent = () => {
     return (
     <>
       <div className='container w-full max-w-full px-10 mt-32 h-4/5 max-h-full flex items-center'>
+        <Helmet>
+          <title>Order</title>
+        </Helmet>
         <div className="w-1/2 h-full flex items-center">
             <img src={getDishData?.getDish.dish?.image} className="w-4/5 h-4/5 rounded-lg shadow-2xl" alt={"dishImage"}/>
         </div>

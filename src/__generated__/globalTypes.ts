@@ -7,6 +7,15 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum OrderStatus {
+  COOKED = "COOKED",
+  COOKING = "COOKING",
+  DELIVERED = "DELIVERED",
+  PENDING = "PENDING",
+  PICKUP = "PICKUP",
+  REJECTED = "REJECTED",
+}
+
 export enum UserRole {
   Client = "Client",
   Owner = "Owner",
