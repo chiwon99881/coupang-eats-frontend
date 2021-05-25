@@ -102,3 +102,7 @@ codegen script: "apollo client:codegen src/__generated__ --target=typescript --o
 - #31 Order DONE
 
 - #32 Order Detail 1
+
+- #33 Order Detail 2
+
+  > Google map api
