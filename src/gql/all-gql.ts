@@ -177,3 +177,12 @@ export const GET_ORDER = gql`
     }
   }
 `;
+
+export const EDIT_USER = gql`
+  mutation editUserMutation($input: EditUserInput!) {
+    editUser(input: $input) {
+      ok
+      error
+    }
+  }
+`;

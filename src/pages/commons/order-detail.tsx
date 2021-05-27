@@ -1,13 +1,19 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { Loading } from '../../components/loading';
-import { GET_ORDER } from '../../gql/all-gql';
+import { EDIT_USER, GET_ORDER } from '../../gql/all-gql';
 import {
   getOrderQuery,
   getOrderQueryVariables,
 } from '../../__generated__/getOrderQuery';
 import GoogleMap from 'google-map-react';
+import { toast } from 'react-toastify';
+import useMe from '../../hooks/useMe';
+import {
+  editUserMutation,
+  editUserMutationVariables,
+} from '../../__generated__/editUserMutation';
 
 interface ISearchTerm {
   orderId: string;
@@ -16,6 +22,11 @@ interface ISearchTerm {
 export const OrderDetail: React.FunctionComponent = () => {
   const { search } = useLocation<ISearchTerm>();
   const [coords, setCoords] = useState({ lat: 0, lng: 0 });
+  const { data: meData, loading: meLoading, error: meError } = useMe();
+  const [editUserMutation, { data: editUserData }] = useMutation<
+    editUserMutation,
+    editUserMutationVariables
+  >(EDIT_USER);
   // eslint-disable-next-line
   const [_, orderId] = search.split('=');
   const {
@@ -25,24 +36,73 @@ export const OrderDetail: React.FunctionComponent = () => {
   } = useQuery<getOrderQuery, getOrderQueryVariables>(GET_ORDER, {
     variables: { input: { id: +orderId } },
   });
-  console.log(orderData, orderError, orderLoading);
   const successGetPosition = async (position: GeolocationPosition) => {
     setCoords({
       lat: position.coords.latitude,
       lng: position.coords.longitude,
     });
   };
+  const successWatchPosition = async (position: GeolocationPosition) => {
+    if (
+      coords.lat !== position.coords.latitude ||
+      coords.lng !== position.coords.longitude
+    ) {
+      setCoords({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      });
+    }
+  };
   const errorGetPosition = (error: GeolocationPositionError) => {
-    console.log(error.message);
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        toast.error('You have to allow location information.');
+        return;
+      case error.POSITION_UNAVAILABLE:
+        toast.error(error.message);
+        return;
+      case error.TIMEOUT:
+        toast.error(error.message);
+        return;
+    }
   };
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       successGetPosition,
       errorGetPosition,
-      { enableHighAccuracy: true },
+      {
+        enableHighAccuracy: true,
+      },
     );
   }, []);
-  if (orderError || orderLoading || coords.lat === 0 || coords.lng === 0) {
+  useEffect(() => {
+    navigator.geolocation.watchPosition(
+      successWatchPosition,
+      errorGetPosition,
+      { enableHighAccuracy: true },
+    );
+    if(meData?.me.ok) {
+      editUserMutation(
+        {variables:
+          {input:
+            {id: meData?.me.user?.id!,
+            lat: coords.lat.toString(),
+            lng: coords.lng.toString()
+            }
+          }
+        }
+      );
+    }
+    // eslint-disable-next-line
+  }, [coords]);
+  if (
+    orderError ||
+    orderLoading ||
+    coords.lat === 0 ||
+    coords.lng === 0 ||
+    meError ||
+    meLoading
+  ) {
     return (
       <div className='container w-full max-w-full h-screen flex items-center justify-center'>
         <Loading />
@@ -53,7 +113,7 @@ export const OrderDetail: React.FunctionComponent = () => {
       <div className='container w-full max-w-full px-10 mt-32 h-screen max-h-full flex items-center'>
         <GoogleMap
           bootstrapURLKeys={{ key: 'AIzaSyC5H0SoPFdUR0gRKDDISaKmIMX1aNZ3iYE' }}
-          defaultCenter={coords}
+          center={coords}
           defaultZoom={18}
         />
         <div className='w-1/4 h-full flex items-center justify-center'>

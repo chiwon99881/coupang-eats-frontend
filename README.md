@@ -106,3 +106,7 @@ codegen script: "apollo client:codegen src/__generated__ --target=typescript --o
 - #33 Order Detail 2
 
   > Google map api
+
+- #34 Order Detail 3
+
+  > get Current and Watch Position
