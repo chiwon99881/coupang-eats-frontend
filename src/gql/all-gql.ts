@@ -149,6 +149,8 @@ export const GET_ORDER = gql`
           address
           phone
           avatar
+          lat
+          lng
         }
         status
         dishes {
@@ -198,6 +200,8 @@ export const CHANGE_ORDER_SUBSCRIPTION = gql`
       rider {
         id
         email
+        lat
+        lng
       }
       status
     }

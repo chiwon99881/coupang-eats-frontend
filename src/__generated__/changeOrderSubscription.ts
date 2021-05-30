@@ -19,6 +19,8 @@ export interface changeOrderSubscription_changeOrder_rider {
   __typename: "User";
   id: number;
   email: string;
+  lat: string;
+  lng: string;
 }
 
 export interface changeOrderSubscription_changeOrder {

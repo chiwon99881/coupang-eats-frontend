@@ -23,6 +23,8 @@ export interface getOrderQuery_getOrder_order_rider {
   address: string;
   phone: string;
   avatar: string | null;
+  lat: string;
+  lng: string;
 }
 
 export interface getOrderQuery_getOrder_order_dishes_restaurant {

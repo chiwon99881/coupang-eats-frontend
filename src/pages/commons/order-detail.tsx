@@ -2,7 +2,7 @@ import { useMutation, useQuery, useSubscription } from '@apollo/client';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { Loading } from '../../components/loading';
-import { CHANGE_ORDER_SUBSCRIPTION, EDIT_ORDER, EDIT_USER, GET_ORDER } from '../../gql/all-gql';
+import { CHANGE_ORDER_SUBSCRIPTION, EDIT_USER, GET_ORDER } from '../../gql/all-gql';
 import {
   getOrderQuery,
   getOrderQueryVariables,
@@ -15,8 +15,6 @@ import {
   editUserMutationVariables,
 } from '../../__generated__/editUserMutation';
 import { changeOrderSubscription } from '../../__generated__/changeOrderSubscription';
-import { editOrderMutation, editOrderMutationVariables } from '../../__generated__/editOrderMutation';
-import { OrderStatus } from 'src/__generated__/globalTypes';
 
 
 
@@ -32,31 +30,36 @@ interface IMarkerProps {
 const MyMarker:React.FunctionComponent<IMarkerProps> = ({lat,lng}) => {
   return (
   //@ts-ignore
-  <div lat={lat} lng={lng} className="text-2xl">🔴</div>
+  <div lat={lat} lng={lng} className="text-5xl">🔴</div>
+  )
+}
+
+const RiderMarker:React.FunctionComponent<IMarkerProps> = ({lat, lng}) => {
+  return (
+    //@ts-ignore
+    <div lat={lat} lng={lng} className="text-6xl">🛵</div>
   )
 }
 
 export const OrderDetail: React.FunctionComponent = () => {
   const { search } = useLocation<ISearchTerm>();
   const [coords, setCoords] = useState({ lat: 0, lng: 0 });
+  const [riderCoords, setRiderCoords] = useState({ lat: 0, lng: 0 });
   const { data: meData, loading: meLoading, error: meError } = useMe();
-  const [editUserMutation, { data: editUserData }] = useMutation<
+  const [editUserMutation] = useMutation<
     editUserMutation,
     editUserMutationVariables
   >(EDIT_USER);
-  const [editOrderMutation, { data: editOrderData, loading: editOrderLoading } ] = useMutation<editOrderMutation, editOrderMutationVariables>(EDIT_ORDER)
-  const {data: changeOrderData, loading: changeOrderLoading , error } = useSubscription<changeOrderSubscription>(CHANGE_ORDER_SUBSCRIPTION);
-  console.log(changeOrderData, changeOrderLoading, error);
-  const test = () => {
-    editOrderMutation({variables: {input: {id: 25, status: OrderStatus.COOKING}}});
-    console.log(editOrderData?.editOrder.ok);
-  }
+  //const [editOrderMutation, { data: editOrderData } ] = useMutation<editOrderMutation, editOrderMutationVariables>(EDIT_ORDER)
+  const {data: changeOrderData } = useSubscription<changeOrderSubscription>(CHANGE_ORDER_SUBSCRIPTION);
+  console.log(changeOrderData);
   // eslint-disable-next-line
   const [_, orderId] = search.split('=');
   const {
     data: orderData,
     error: orderError,
     loading: orderLoading,
+    refetch: getOrderRefetchFunction
   } = useQuery<getOrderQuery, getOrderQueryVariables>(GET_ORDER, {
     variables: { input: { id: +orderId } },
   });
@@ -98,6 +101,12 @@ export const OrderDetail: React.FunctionComponent = () => {
         enableHighAccuracy: true,
       },
     );
+    if(orderData?.getOrder.order?.rider) {
+      setRiderCoords({
+        lat: parseFloat(orderData.getOrder.order.rider.lat),
+        lng: parseFloat(orderData.getOrder.order.rider.lng)
+      })
+    }
   }, []);
   useEffect(() => {
     navigator.geolocation.watchPosition(
@@ -119,13 +128,31 @@ export const OrderDetail: React.FunctionComponent = () => {
     }
     // eslint-disable-next-line
   }, [coords]);
+  useEffect(() => {
+    console.log("here?")
+    getOrderRefetchFunction();
+    if(changeOrderData?.changeOrder.rider?.lat && changeOrderData.changeOrder.rider.lng) {
+      setRiderCoords({
+        lat: parseFloat(changeOrderData?.changeOrder.rider?.lat),
+        lng: parseFloat(changeOrderData?.changeOrder.rider?.lng)
+      })
+    }
+    // eslint-disable-next-line
+  }, [changeOrderData?.changeOrder.rider, 
+    changeOrderData?.changeOrder.rider?.lat, 
+    changeOrderData?.changeOrder.rider?.lng, 
+    changeOrderData?.changeOrder.status
+    ])
+    console.log(riderCoords.lat, riderCoords.lng)
+    console.log(changeOrderData?.changeOrder, orderData);
   if (
     orderError ||
     orderLoading ||
     coords.lat === 0 ||
     coords.lng === 0 ||
     meError ||
-    meLoading
+    meLoading ||
+    !orderData
   ) {
     return (
       <div className='container w-full max-w-full h-screen flex items-center justify-center'>
@@ -141,10 +168,87 @@ export const OrderDetail: React.FunctionComponent = () => {
           defaultZoom={18}
         >
           <MyMarker lat={coords.lat} lng={coords.lng} />
+          {orderData.getOrder.ok && 
+          orderData.getOrder.order?.rider && 
+          parseInt(orderData.getOrder.order.rider.lat) !== 0 && 
+          parseInt(orderData.getOrder.order.rider.lng) !== 0 &&
+          <RiderMarker lat={riderCoords.lat} lng={riderCoords.lng} />
+          }
           </GoogleMapReact>
         <div className='w-1/4 h-full flex items-center justify-center'>
           <div className='border border-gray-200 rounded-md h-1/2 w-4/5'>
-            <button onClick={test}>Edit Order Test</button>
+            <div className="p-3 flex flex-col w-full h-full">
+              <div className="w-full flex items-center justify-center">
+                <span className="text-xl font-light">Order Specification</span>
+              </div>
+              <div className="w-full">
+                {orderData.getOrder.order?.dishes && orderData.getOrder.order?.dishes.map(dish => {
+                  return (
+                    <div className="w-full flex items-center mt-8 border-b pb-5 border-gray-300">
+                      <img src={dish.image} alt={"dishImage"} className="w-20 h-20 rounded-xl" />
+                      <div className="flex flex-col w-full ml-5">
+                        <span className="text-xl text-gray-500">{dish.name}</span>
+                        {orderData.getOrder.order?.dishOption && <span className="text-sm mt-2">Option</span>}
+                        <div className="w-full flex flex-col justify-center">
+                        {orderData.getOrder.order?.dishOption && orderData.getOrder.order?.dishOption.map(dishOption => {
+                          if(!dishOption.choice) {
+                            return (
+                              <span className="mr-1 text-sm text-gray-500">- {dishOption.option}</span>
+                              )
+                            }
+                            return (
+                            dishOption.choice.map(choice => {
+                              return (
+                                <span className="mr-1 text-sm text-gray-500">{`- ${dishOption.option} - ${choice.kind}`}</span>
+                              )
+                            }))
+                          })}                        
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="border-b border-gray-300 pb-5">
+                <div className="w-full flex items-center mt-3">
+                  <span className="mr-3 text-sm w-1/3">Address: </span>
+                  <span className="w-full text-sm text-gray-500">{orderData.getOrder.order?.client.address}</span>
+                </div>
+                <div className="w-full flex items-center mt-3">
+                  <span className="mr-3 text-sm w-1/3">Client: </span>
+                  <span className="w-full text-sm text-gray-500">{orderData.getOrder.order?.client.email}</span>
+                </div>
+                <div className="w-full flex items-center mt-3">
+                  <span className="mr-3 text-sm w-1/3">Rider: </span>
+                  {orderData.getOrder.order?.rider ? 
+                    <span className="w-full text-sm text-gray-500">
+                      {orderData.getOrder.order.rider.email}
+                    </span> : 
+                    <span className="w-full text-sm text-gray-500">
+                      Not assign
+                    </span>
+                  }
+                </div>
+                <div className="w-full flex items-center mt-3">
+                  <span className="mr-3 text-sm w-1/3">Rider phone: </span>
+                  {orderData.getOrder.order?.rider ? 
+                    <span className="w-full text-sm text-gray-500">
+                      {orderData.getOrder.order.rider.phone}
+                    </span> : 
+                    <span className="w-full text-sm text-gray-500">
+                      Not assign
+                    </span>
+                  }
+                </div>
+                <div className="w-full flex items-center mt-3">
+                  <span className="mr-3 text-sm w-1/3">Price: </span>
+                  <span className="w-full text-sm text-gray-500">{`₩ ${orderData.getOrder.order?.totalPrice}`}</span>
+                </div>
+              </div>
+              <div className="w-full h-full flex items-center justify-center text-2xl">
+                {orderData.getOrder.order?.status}
+              </div>
+            </div>
           </div>
         </div>
       </div>
