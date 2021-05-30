@@ -186,3 +186,29 @@ export const EDIT_USER = gql`
     }
   }
 `;
+
+export const CHANGE_ORDER_SUBSCRIPTION = gql`
+  subscription changeOrderSubscription {
+    changeOrder {
+      id
+      client {
+        id
+        email
+      }
+      rider {
+        id
+        email
+      }
+      status
+    }
+  }
+`;
+
+export const EDIT_ORDER = gql`
+  mutation editOrderMutation($input: EditStatusOrderInput!) {
+    editOrder(input: $input) {
+      ok
+      error
+    }
+  }
+`;

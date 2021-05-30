@@ -110,3 +110,5 @@ codegen script: "apollo client:codegen src/__generated__ --target=typescript --o
 - #34 Order Detail 3
 
   > get Current and Watch Position
+
+- #35 Subscription Settings

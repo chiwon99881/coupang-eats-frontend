@@ -55,6 +55,11 @@ export interface DishOptionInputType {
   extraPrice?: number | null;
 }
 
+export interface EditStatusOrderInput {
+  id: number;
+  status: OrderStatus;
+}
+
 export interface EditUserInput {
   id: number;
   createdAt?: any | null;
