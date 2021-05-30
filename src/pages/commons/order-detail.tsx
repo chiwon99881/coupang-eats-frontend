@@ -52,7 +52,6 @@ export const OrderDetail: React.FunctionComponent = () => {
   >(EDIT_USER);
   //const [editOrderMutation, { data: editOrderData } ] = useMutation<editOrderMutation, editOrderMutationVariables>(EDIT_ORDER)
   const {data: changeOrderData } = useSubscription<changeOrderSubscription>(CHANGE_ORDER_SUBSCRIPTION);
-  console.log(changeOrderData);
   // eslint-disable-next-line
   const [_, orderId] = search.split('=');
   const {
@@ -63,6 +62,33 @@ export const OrderDetail: React.FunctionComponent = () => {
   } = useQuery<getOrderQuery, getOrderQueryVariables>(GET_ORDER, {
     variables: { input: { id: +orderId } },
   });
+  const googleMapApiLoaded = (map: any, maps: any) => {
+    if(maps && map) {
+      console.log(map);
+      const directionService = new maps.DirectionsService();
+      const directionDisplay = new maps.DirectionsRenderer();
+      console.log(riderCoords, coords)
+      directionService.route({
+        origin: new maps.LatLng(riderCoords.lat, riderCoords.lng),
+        destination: new maps.LatLng(coords.lat, coords.lng),
+        travelMode: maps.TravelMode.TRANSIT,
+      }, (response:any, status:any) => {
+        if(status === 'OK') {
+          console.log(directionDisplay.setDirections);
+          directionDisplay.setDirections(response);
+          directionDisplay.setOptions({
+            polylineOptions: {
+              strokeWeight:8,
+              strokeColor: '#0d0d73'
+            },
+          })
+          directionDisplay.setMap(map);
+        } else {
+          console.log(response, status);
+        }
+      })
+    }
+  }
   const successGetPosition = async (position: GeolocationPosition) => {
     setCoords({
       lat: position.coords.latitude,
@@ -107,7 +133,7 @@ export const OrderDetail: React.FunctionComponent = () => {
         lng: parseFloat(orderData.getOrder.order.rider.lng)
       })
     }
-  }, []);
+  }, [orderData?.getOrder.order?.rider]);
   useEffect(() => {
     navigator.geolocation.watchPosition(
       successWatchPosition,
@@ -129,7 +155,6 @@ export const OrderDetail: React.FunctionComponent = () => {
     // eslint-disable-next-line
   }, [coords]);
   useEffect(() => {
-    console.log("here?")
     getOrderRefetchFunction();
     if(changeOrderData?.changeOrder.rider?.lat && changeOrderData.changeOrder.rider.lng) {
       setRiderCoords({
@@ -143,8 +168,6 @@ export const OrderDetail: React.FunctionComponent = () => {
     changeOrderData?.changeOrder.rider?.lng, 
     changeOrderData?.changeOrder.status
     ])
-    console.log(riderCoords.lat, riderCoords.lng)
-    console.log(changeOrderData?.changeOrder, orderData);
   if (
     orderError ||
     orderLoading ||
@@ -166,6 +189,8 @@ export const OrderDetail: React.FunctionComponent = () => {
           bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_API! }}
           center={coords}
           defaultZoom={18}
+          yesIWantToUseGoogleMapApiInternals={true}
+          onGoogleApiLoaded={({maps, map}) => googleMapApiLoaded(map,maps)}
         >
           <MyMarker lat={coords.lat} lng={coords.lng} />
           {orderData.getOrder.ok && 
@@ -182,24 +207,24 @@ export const OrderDetail: React.FunctionComponent = () => {
                 <span className="text-xl font-light">Order Specification</span>
               </div>
               <div className="w-full">
-                {orderData.getOrder.order?.dishes && orderData.getOrder.order?.dishes.map(dish => {
+                {orderData.getOrder.order?.dishes && orderData.getOrder.order?.dishes.map((dish,index) => {
                   return (
-                    <div className="w-full flex items-center mt-8 border-b pb-5 border-gray-300">
+                    <div className="w-full flex items-center mt-8 border-b pb-5 border-gray-300" key={index}>
                       <img src={dish.image} alt={"dishImage"} className="w-20 h-20 rounded-xl" />
                       <div className="flex flex-col w-full ml-5">
                         <span className="text-xl text-gray-500">{dish.name}</span>
                         {orderData.getOrder.order?.dishOption && <span className="text-sm mt-2">Option</span>}
                         <div className="w-full flex flex-col justify-center">
-                        {orderData.getOrder.order?.dishOption && orderData.getOrder.order?.dishOption.map(dishOption => {
+                        {orderData.getOrder.order?.dishOption && orderData.getOrder.order?.dishOption.map((dishOption, index) => {
                           if(!dishOption.choice) {
                             return (
-                              <span className="mr-1 text-sm text-gray-500">- {dishOption.option}</span>
+                              <span className="mr-1 text-sm text-gray-500" key={index}>- {dishOption.option}</span>
                               )
                             }
                             return (
-                            dishOption.choice.map(choice => {
+                            dishOption.choice.map((choice,index) => {
                               return (
-                                <span className="mr-1 text-sm text-gray-500">{`- ${dishOption.option} - ${choice.kind}`}</span>
+                                <span className="mr-1 text-sm text-gray-500" key={index}>{`- ${dishOption.option} - ${choice.kind}`}</span>
                               )
                             }))
                           })}                        
